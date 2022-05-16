@@ -1,0 +1,15 @@
+/**
+ * タイピングゲームを生成するFactoryクラス。
+ */
+public class TypingGameFactory {
+  /**
+   * 引数に指定された難易度のタイピングゲームを生成する。
+   *
+   * @param difficulty タイピングゲームの難易度
+   * @return 生成されたタイピングゲーム
+   */
+  public static TypingGame generate(TypingGameDifficulty difficulty) {
+    Question[] questions = QuestionFactory.generate(difficulty);
+    return new TypingGame(difficulty, questions);
+  }
+}
