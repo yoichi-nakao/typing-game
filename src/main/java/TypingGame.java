@@ -1,3 +1,5 @@
+import java.util.List;
+
 /**
  * 一回のタイピングゲームを表現するクラス。
  */
@@ -10,7 +12,7 @@ public class TypingGame {
   /**
    * 出題対象の問題。
    */
-  private final Question[] questions;
+  private final List<Question> questions;
 
   /**
    * 全問終了するのにかかった時間
@@ -28,7 +30,7 @@ public class TypingGame {
    * @param difficulty タイピングゲームの難易度
    * @param questions  出題対象の問題
    */
-  public TypingGame(TypingGameDifficulty difficulty, Question[] questions) {
+  public TypingGame(TypingGameDifficulty difficulty, List<Question> questions) {
     this.difficulty = difficulty;
     this.questions = questions;
   }
@@ -105,9 +107,9 @@ public class TypingGame {
    */
   private Question getNextQuestion() {
     while (true) {
-      double indexAsDouble = Math.random() * questions.length;
+      double indexAsDouble = Math.random() * questions.size();
       int index = (int) indexAsDouble;
-      Question question = questions[index];
+      Question question = questions.get(index);
       if (prevQuestion == null || !prevQuestion.isSame(question)) {
         prevQuestion = question;
         return question;

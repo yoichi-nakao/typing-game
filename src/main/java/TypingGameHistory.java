@@ -1,5 +1,6 @@
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * タイピングゲームの履歴を表現するクラス。
@@ -8,7 +9,7 @@ public class TypingGameHistory {
   /**
    * タイピングゲームの履歴
    */
-  private TypingGame[] typingGames;
+  private final List<TypingGame> typingGames = new ArrayList<>();
 
   /**
    * タイピングゲームの履歴に追加する。
@@ -16,33 +17,20 @@ public class TypingGameHistory {
    * @param typingGame 追加するタイピングゲーム
    */
   public void add(TypingGame typingGame) {
-    if (typingGames == null) {
-      typingGames = new TypingGame[1];
-      typingGames[0] = typingGame;
-      return;
-    }
-
-    TypingGame[] newHistory = new TypingGame[typingGames.length + 1];
-    System.arraycopy(typingGames, 0, newHistory, 0, typingGames.length);
-    newHistory[typingGames.length] = typingGame;
-    typingGames = newHistory;
+    typingGames.add(typingGame);
   }
 
   /**
-   * 引数で指定された難易度のタイピングゲームの履歴を降順にソートして返却する。
+   * 引数で指定された難易度のタイピングゲームの履歴を降順にソートして、指定した件数だけ返却する。
    *
    * @param difficulty タイピングゲームの難易度
+   * @param limit      返却する件数
    * @return 引数で指定された難易度のタイピングゲームの履歴
    */
-  public TypingGame[] sortedTypingGames(TypingGameDifficulty difficulty) {
-    TypingGame[] targetTypingGames = getTypingGames(difficulty);
-    Arrays.sort(targetTypingGames, new Comparator<TypingGame>() {
-      @Override
-      public int compare(TypingGame o1, TypingGame o2) {
-        return (int) (o1.getTimeToCalculate() - o2.getTimeToCalculate());
-      }
-    });
-    return targetTypingGames;
+  public List<TypingGame> sortedTypingGames(TypingGameDifficulty difficulty, int limit) {
+    return sortedTypingGames(difficulty).stream()
+            .limit(limit)
+            .collect(Collectors.toUnmodifiableList());
   }
 
   /**
@@ -51,23 +39,21 @@ public class TypingGameHistory {
    * @param difficulty タイピングゲームの難易度
    * @return 引数で指定された難易度のタイピングゲームの履歴
    */
-  private TypingGame[] getTypingGames(TypingGameDifficulty difficulty) {
-    int count = 0;
-    for (TypingGame typingGame : typingGames) {
-      if (typingGame.isSameDifficulty(difficulty)) {
-        count++;
-      }
-    }
+  public List<TypingGame> sortedTypingGames(TypingGameDifficulty difficulty) {
+    return getTypingGames(difficulty).stream()
+            .sorted((o1, o2) -> (int) (o1.getTimeToCalculate() - o2.getTimeToCalculate()))
+            .collect(Collectors.toUnmodifiableList());
+  }
 
-    TypingGame[] targetTypingGames = new TypingGame[count];
-    int i = 0;
-    for (TypingGame typingGame : typingGames) {
-      if (typingGame.isSameDifficulty(difficulty)) {
-        targetTypingGames[i] = typingGame;
-        i++;
-      }
-    }
-
-    return targetTypingGames;
+  /**
+   * 引数で指定された難易度のタイピングゲームの履歴を返却する。
+   *
+   * @param difficulty タイピングゲームの難易度
+   * @return 引数で指定された難易度のタイピングゲームの履歴
+   */
+  public List<TypingGame> getTypingGames(TypingGameDifficulty difficulty) {
+    return typingGames.stream()
+            .filter(tg -> tg.isSameDifficulty(difficulty))
+            .collect(Collectors.toUnmodifiableList());
   }
 }

@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * タイピングゲームを実行するクラス。
  */
@@ -36,9 +39,8 @@ public class Main {
     int defaultLevel = TypingGameDifficulty.getDefault().getLevel();
 
     System.out.printf("難易度を選択してください(1-%d) [%d]：%n", max, defaultLevel);
-    for (TypingGameDifficulty difficulty : TypingGameDifficulty.values()) {
-      System.out.printf(" %d:%s%n", difficulty.getLevel(), difficulty.getName());
-    }
+    Arrays.stream(TypingGameDifficulty.values())
+            .forEach(d -> System.out.printf(" %d:%s%n", d.getLevel(), d.getName()));
 
     int inputDifficultyLevel = getInputInt(defaultLevel);
 
@@ -74,12 +76,10 @@ public class Main {
    * @param difficulty        タイピングゲームの難易度
    */
   private static void displayRanking(TypingGameHistory typingGameHistory, TypingGameDifficulty difficulty) {
-    TypingGame[] sortedTypingGames = typingGameHistory.sortedTypingGames(difficulty);
-    int i = 0;
-    while (i < sortedTypingGames.length && i < 10) {
-      TypingGame typingGame = sortedTypingGames[i];
+    List<TypingGame> sortedTypingGames = typingGameHistory.sortedTypingGames(difficulty, 10);
+    for (int i = 0; i < sortedTypingGames.size(); i++) {
+      TypingGame typingGame = sortedTypingGames.get(i);
       System.out.printf("%2d: %10d[ms]%n", i + 1, typingGame.getTimeToCalculate());
-      i++;
     }
   }
 

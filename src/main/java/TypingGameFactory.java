@@ -1,3 +1,5 @@
+import java.util.List;
+
 /**
  * タイピングゲームを生成するFactoryクラス。
  */
@@ -9,7 +11,7 @@ public class TypingGameFactory {
    * @return 生成されたタイピングゲーム
    */
   public static TypingGame generate(TypingGameDifficulty difficulty) {
-    Question[] questions = QuestionFactory.generate(difficulty);
+    List<Question> questions = QuestionFactory.generate(difficulty);
     return new TypingGame(difficulty, questions);
   }
 }

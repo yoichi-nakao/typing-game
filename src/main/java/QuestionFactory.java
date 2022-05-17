@@ -1,3 +1,6 @@
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * 問題を生成するFactoryクラス。
  */
@@ -8,26 +11,8 @@ public class QuestionFactory {
    * @param difficulty 問題の難易度
    * @return 生成された問題
    */
-  public static Question[] generate(TypingGameDifficulty difficulty) {
-    Question[] questions = generate();
-
-    int count = 0;
-    for (Question question : questions) {
-      if (question.lessThan(difficulty)) {
-        count++;
-      }
-    }
-
-    Question[] targetQuestions = new Question[count];
-    int i = 0;
-    for (Question question : questions) {
-      if (question.lessThan(difficulty)) {
-        targetQuestions[i] = question;
-        i++;
-      }
-    }
-
-    return targetQuestions;
+  public static List<Question> generate(TypingGameDifficulty difficulty) {
+    return generate().stream().filter(q -> q.lessThan(difficulty)).collect(Collectors.toUnmodifiableList());
   }
 
   /**
@@ -35,8 +20,8 @@ public class QuestionFactory {
    *
    * @return 全ての難易度の問題
    */
-  private static Question[] generate() {
-    return new Question[]{
+  private static List<Question> generate() {
+    return List.of(
             // 基本データ型関連
             new Question("byte", TypingGameDifficulty.EASY),
             new Question("short", TypingGameDifficulty.NORMAL),
@@ -101,7 +86,7 @@ public class QuestionFactory {
             // その他
             new Question("const", TypingGameDifficulty.NORMAL),
             new Question("goto", TypingGameDifficulty.EASY),
-            new Question("assert", TypingGameDifficulty.NORMAL),
-    };
+            new Question("assert", TypingGameDifficulty.NORMAL)
+    );
   }
 }

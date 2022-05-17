@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * タイピングゲームで扱う難易度。
  */
@@ -39,12 +41,10 @@ public enum TypingGameDifficulty {
    * @return TypingGameDifficulty
    */
   public static TypingGameDifficulty of(int level) {
-    for (TypingGameDifficulty value : TypingGameDifficulty.values()) {
-      if (value.level == level) {
-        return value;
-      }
-    }
-    throw new RuntimeException("指定した値のTypingGameDifficultyは存在しません: " + level);
+    return Arrays.stream(TypingGameDifficulty.values())
+            .filter(d -> d.level == level)
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("指定した値のTypingGameDifficultyは存在しません: " + level));
   }
 
   /**
@@ -53,12 +53,10 @@ public enum TypingGameDifficulty {
    * @return TypingGameDifficultyのデフォルト値
    */
   public static TypingGameDifficulty getDefault() {
-    for (TypingGameDifficulty value : TypingGameDifficulty.values()) {
-      if (value.defaultLevel) {
-        return value;
-      }
-    }
-    throw new RuntimeException("TypingGameDifficultyの初期値は設定されていません。");
+    return Arrays.stream(TypingGameDifficulty.values())
+            .filter(d -> d.defaultLevel)
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("TypingGameDifficultyの初期値は設定されていません。"));
   }
 
   /**
