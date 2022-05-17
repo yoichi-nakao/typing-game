@@ -79,7 +79,8 @@ public class Main {
     List<TypingGame> sortedTypingGames = typingGameHistory.sortedTypingGames(difficulty, 10);
     for (int i = 0; i < sortedTypingGames.size(); i++) {
       TypingGame typingGame = sortedTypingGames.get(i);
-      System.out.printf("%2d: %10d[ms]%n", i + 1, typingGame.getTimeToCalculate());
+      System.out.printf("%2d: %10d[ms]\t開始時刻: %s%n",
+              i + 1, typingGame.getTimeToCalculate(), typingGame.getStartDateTime("yyyy/MM/dd HH:mm:ss"));
     }
   }
 

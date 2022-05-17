@@ -1,3 +1,6 @@
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /**
@@ -15,9 +18,14 @@ public class TypingGame {
   private final List<Question> questions;
 
   /**
-   * 全問終了するのにかかった時間
+   * タイピングゲームの開始時間
    */
-  private long timeToCalculate;
+  private ZonedDateTime startTime;
+
+  /**
+   * タイピングゲームの終了時間
+   */
+  private ZonedDateTime endTime;
 
   /**
    * 前回出題した問題
@@ -40,7 +48,7 @@ public class TypingGame {
    */
   public void execute() {
     System.out.println("Start!");
-    long start = System.currentTimeMillis();
+    startTime = ZonedDateTime.now();
 
     int numberOfQuestions = getNumberOfQuestions();
     for (int i = 0; i < numberOfQuestions; i++) {
@@ -57,10 +65,9 @@ public class TypingGame {
       }
     }
 
-    long end = System.currentTimeMillis();
-    timeToCalculate = end - start;
+    endTime = ZonedDateTime.now();
 
-    System.out.println("Finished. time=" + timeToCalculate + "[ms]");
+    System.out.println("Finished. time=" + getTimeToCalculate() + "[ms]");
   }
 
   /**
@@ -69,7 +76,18 @@ public class TypingGame {
    * @return 全問終了するのにかかった時間
    */
   public long getTimeToCalculate() {
-    return timeToCalculate;
+    return ChronoUnit.MILLIS.between(startTime, endTime);
+  }
+
+  /**
+   * 引数で指定されたフォーマットで開始時間の文字列表現を返却する。
+   *
+   * @param format 開始時間の文字列表現のフォーマット
+   * @return 開始時間の文字列表現
+   */
+  public String getStartDateTime(String format) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+    return formatter.format(startTime);
   }
 
   /**
@@ -124,6 +142,6 @@ public class TypingGame {
    */
   @Override
   public String toString() {
-    return "TypingGame[difficulty=" + difficulty + ", timeToCalculate=" + timeToCalculate + "]";
+    return "TypingGame[difficulty=" + difficulty + ", timeToCalculate=" + getTimeToCalculate() + "]";
   }
 }
