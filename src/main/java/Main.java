@@ -22,6 +22,8 @@ public class Main {
 
       typingGame.execute();
 
+      displayResult(typingGame);
+
       history.add(typingGame);
 
       displayRanking(history, difficulty);
@@ -66,6 +68,20 @@ public class Main {
       }
       count--;
       System.out.println();
+    }
+  }
+
+  /**
+   * 回答履歴を表示する。
+   *
+   * @param typingGame 回答履歴を表示するタイピングゲーム
+   */
+  private static void displayResult(TypingGame typingGame) {
+    List<QuestionResult> results = typingGame.getResults();
+    for (int i = 0; i < results.size(); i++) {
+      QuestionResult result = results.get(i);
+      System.out.printf("%3d: 問題: %s\t回答: %s\t判定: %s%n",
+              i + 1, result.getQuestion().getWord(), result.getAnswer(), result.isJudge() ? "OK" : "NG");
     }
   }
 

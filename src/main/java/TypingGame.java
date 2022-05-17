@@ -1,6 +1,7 @@
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,6 +17,11 @@ public class TypingGame {
    * 出題対象の問題。
    */
   private final List<Question> questions;
+
+  /**
+   * 出題した問題の履歴
+   */
+  private final List<QuestionResult> results = new ArrayList<>();
 
   /**
    * タイピングゲームの開始時間
@@ -56,7 +62,10 @@ public class TypingGame {
       String prompt = question.getWord() + ": ";
       while (true) {
         String input = StandardInputReader.getInputString(prompt);
-        if (question.isSame(input)) {
+        boolean judge = question.isSame(input);
+        results.add(new QuestionResult(question, input, judge));
+
+        if (judge) {
           System.out.println("OK!");
           break;
         } else {
@@ -68,6 +77,15 @@ public class TypingGame {
     endTime = ZonedDateTime.now();
 
     System.out.println("Finished. time=" + getTimeToCalculate() + "[ms]");
+  }
+
+  /**
+   * 出題した問題の履歴を返却する。
+   *
+   * @return 出題した問題の履歴
+   */
+  public List<QuestionResult> getResults() {
+    return results;
   }
 
   /**
