@@ -19,6 +19,11 @@ public class TypingGame {
   private final List<Question> questions;
 
   /**
+   * タイピングゲームのリスナー。
+   */
+  private final TypingGameListener listener;
+
+  /**
    * 出題した問題の履歴
    */
   private final List<QuestionResult> results = new ArrayList<>();
@@ -43,40 +48,42 @@ public class TypingGame {
    *
    * @param difficulty タイピングゲームの難易度
    * @param questions  出題対象の問題
+   * @param listener   タイピングゲームのリスナー
    */
-  public TypingGame(TypingGameDifficulty difficulty, List<Question> questions) {
+  public TypingGame(TypingGameDifficulty difficulty, List<Question> questions, TypingGameListener listener) {
     this.difficulty = difficulty;
     this.questions = questions;
+    this.listener = listener;
   }
 
   /**
    * タイピングゲームを実行する。
    */
   public void execute() {
-    System.out.println("Start!");
+    listener.onGameStart(this);
+
     startTime = ZonedDateTime.now();
 
     int numberOfQuestions = getNumberOfQuestions();
     for (int i = 0; i < numberOfQuestions; i++) {
       Question question = getNextQuestion();
-      String prompt = question.getWord() + ": ";
       while (true) {
-        String input = StandardInputReader.getInputString(prompt);
+        String input = listener.receiveAnswer(question);
         boolean judge = question.isSame(input);
         results.add(new QuestionResult(question, input, judge));
 
         if (judge) {
-          System.out.println("OK!");
+          listener.onJudgeOK(this);
           break;
         } else {
-          System.out.println("MISS...");
+          listener.onJudgeNG(this);
         }
       }
     }
 
     endTime = ZonedDateTime.now();
 
-    System.out.println("Finished. time=" + getTimeToCalculate() + "[ms]");
+    listener.onGameEnd(this);
   }
 
   /**

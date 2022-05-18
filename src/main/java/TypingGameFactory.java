@@ -12,6 +12,7 @@ public class TypingGameFactory {
    */
   public static TypingGame generate(TypingGameDifficulty difficulty) {
     List<Question> questions = QuestionFactory.generate(difficulty);
-    return new TypingGame(difficulty, questions);
+    TypingGameListener listener = new NormalTypingGameListener();
+    return new TypingGame(difficulty, questions, listener);
   }
 }
