@@ -20,7 +20,9 @@ public class ConsoleConductor {
 
       TypingGameMode typingGameMode = displayInputMode();
 
-      TypingGame typingGame = TypingGameFactory.generate(difficulty, typingGameMode);
+      NextQuestionGeneratorMode calculatorMode = displayInputGeneratorMode();
+
+      TypingGame typingGame = TypingGameFactory.generate(difficulty, typingGameMode, calculatorMode);
 
       displayCountDown();
 
@@ -69,6 +71,24 @@ public class ConsoleConductor {
     int inputDifficultyLevel = getInputInt(defaultMode);
 
     return TypingGameMode.of(inputDifficultyLevel);
+  }
+
+  /**
+   * タイピングゲームの次の問題の生成モード入力を表示する。
+   *
+   * @return タイピングゲームの次の問題の生成モード
+   */
+  private NextQuestionGeneratorMode displayInputGeneratorMode() {
+    int max = NextQuestionGeneratorMode.values().length;
+    int defaultMode = NextQuestionGeneratorMode.getDefault().getMode();
+
+    System.out.printf("質問の出題方法を選択してください(1-%d) [%d]：%n", max, defaultMode);
+    Arrays.stream(NextQuestionGeneratorMode.values())
+            .forEach(d -> System.out.printf(" %d:%s%n", d.getMode(), d.getName()));
+
+    int inputDifficultyLevel = getInputInt(defaultMode);
+
+    return NextQuestionGeneratorMode.of(inputDifficultyLevel);
   }
 
   /**

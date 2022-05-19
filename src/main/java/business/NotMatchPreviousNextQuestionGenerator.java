@@ -5,14 +5,9 @@ import java.util.List;
 /**
  * 直前の問題と一致させないように次の問題をランダムに生成するクラス。
  *
- * @see NextQuestionGenerator
+ * @see AbstractNextQuestionGenerator
  */
-public class NotMatchPreviousNextQuestionGenerator implements NextQuestionGenerator {
-  /**
-   * 出題対象の問題。
-   */
-  private final List<Question> questions;
-
+public class NotMatchPreviousNextQuestionGenerator extends AbstractNextQuestionGenerator {
   /**
    * 前回出題した問題。
    */
@@ -24,7 +19,7 @@ public class NotMatchPreviousNextQuestionGenerator implements NextQuestionGenera
    * @param questions 出題対象の問題
    */
   public NotMatchPreviousNextQuestionGenerator(List<Question> questions) {
-    this.questions = questions;
+    super(questions);
   }
 
   @Override

@@ -14,10 +14,12 @@ public class TypingGameFactory {
    *
    * @param difficulty     タイピングゲームの難易度
    * @param typingGameMode タイピングゲームのモード
+   * @param generatorMode  タイピングゲームの次の問題の生成モード
    * @return 生成されたタイピングゲーム
    */
-  public static TypingGame generate(TypingGameDifficulty difficulty, TypingGameMode typingGameMode) {
+  public static TypingGame generate(TypingGameDifficulty difficulty, TypingGameMode typingGameMode, NextQuestionGeneratorMode generatorMode) {
     List<Question> questions = QuestionFactory.generate(difficulty);
+
     TypingGameListener listener;
     switch (typingGameMode) {
       case NORMAL:
@@ -29,7 +31,19 @@ public class TypingGameFactory {
       default:
         throw new RuntimeException("不正なゲームモードです。");
     }
-    NextQuestionGenerator calculator = new NotMatchPreviousNextQuestionGenerator(questions);
-    return new TypingGame(difficulty, listener, calculator);
+
+    NextQuestionGenerator generator;
+    switch (generatorMode) {
+      case NOT_MATCH_PREVIOUS:
+        generator = new NotMatchPreviousNextQuestionGenerator(questions);
+        break;
+      case NOT_MATCH_PAST:
+        generator = new NotMatchPastNextQuestionGenerator(questions);
+        break;
+      default:
+        throw new RuntimeException("不正な出題形式モードです。");
+    }
+
+    return new TypingGame(difficulty, listener, generator);
   }
 }
