@@ -18,7 +18,9 @@ public class ConsoleConductor {
     do {
       TypingGameDifficulty difficulty = displayInputDifficulty();
 
-      TypingGame typingGame = TypingGameFactory.generate(difficulty);
+      TypingGameMode typingGameMode = displayInputMode();
+
+      TypingGame typingGame = TypingGameFactory.generate(difficulty, typingGameMode);
 
       displayCountDown();
 
@@ -49,6 +51,24 @@ public class ConsoleConductor {
     int inputDifficultyLevel = getInputInt(defaultLevel);
 
     return TypingGameDifficulty.of(inputDifficultyLevel);
+  }
+
+  /**
+   * タイピングゲームのモード入力を表示する。
+   *
+   * @return タイピングゲームのモード
+   */
+  private TypingGameMode displayInputMode() {
+    int max = TypingGameMode.values().length;
+    int defaultMode = TypingGameMode.getDefault().getMode();
+
+    System.out.printf("ゲームモードを選択してください(1-%d) [%d]：%n", max, defaultMode);
+    Arrays.stream(TypingGameMode.values())
+            .forEach(d -> System.out.printf(" %d:%s%n", d.getMode(), d.getName()));
+
+    int inputDifficultyLevel = getInputInt(defaultMode);
+
+    return TypingGameMode.of(inputDifficultyLevel);
   }
 
   /**
