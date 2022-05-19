@@ -29,6 +29,7 @@ public class TypingGameFactory {
       default:
         throw new RuntimeException("不正なゲームモードです。");
     }
-    return new TypingGame(difficulty, questions, listener);
+    NextQuestionGenerator calculator = new NotMatchPreviousNextQuestionGenerator(questions);
+    return new TypingGame(difficulty, listener, calculator);
   }
 }

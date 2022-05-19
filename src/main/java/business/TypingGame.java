@@ -16,14 +16,14 @@ public class TypingGame {
   private final TypingGameDifficulty difficulty;
 
   /**
-   * 出題対象の問題。
-   */
-  private final List<Question> questions;
-
-  /**
    * タイピングゲームのリスナー。
    */
   private final TypingGameListener listener;
+
+  /**
+   * 次の問題の生成インターフェース。
+   */
+  private final NextQuestionGenerator generator;
 
   /**
    * 出題した問題の履歴
@@ -41,21 +41,16 @@ public class TypingGame {
   private ZonedDateTime endTime;
 
   /**
-   * 前回出題した問題
-   */
-  private Question prevQuestion;
-
-  /**
    * コンストラクタ。
    *
    * @param difficulty タイピングゲームの難易度
-   * @param questions  出題対象の問題
    * @param listener   タイピングゲームのリスナー
+   * @param generator  次の問題の生成インターフェース
    */
-  public TypingGame(TypingGameDifficulty difficulty, List<Question> questions, TypingGameListener listener) {
+  public TypingGame(TypingGameDifficulty difficulty, TypingGameListener listener, NextQuestionGenerator generator) {
     this.difficulty = difficulty;
-    this.questions = questions;
     this.listener = listener;
+    this.generator = generator;
   }
 
   /**
@@ -68,7 +63,7 @@ public class TypingGame {
 
     int numberOfQuestions = getNumberOfQuestions();
     for (int i = 0; i < numberOfQuestions; i++) {
-      Question question = getNextQuestion();
+      Question question = generator.generate();
       while (true) {
         String input = listener.receiveAnswer(question);
         boolean judge = question.isSame(input);
@@ -142,23 +137,6 @@ public class TypingGame {
         return 20;
       default:
         throw new RuntimeException("不正な難易度です。");
-    }
-  }
-
-  /**
-   * 次に出題する問題を返却する。
-   *
-   * @return 次に出題する問題
-   */
-  private Question getNextQuestion() {
-    while (true) {
-      double indexAsDouble = Math.random() * questions.size();
-      int index = (int) indexAsDouble;
-      Question question = questions.get(index);
-      if (prevQuestion == null || !prevQuestion.isSame(question)) {
-        prevQuestion = question;
-        return question;
-      }
     }
   }
 
