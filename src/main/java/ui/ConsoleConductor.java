@@ -1,9 +1,10 @@
 package ui;
 
-import business.QuestionResult;
-import business.TypingGame;
-import business.TypingGameDifficulty;
-import business.TypingGameHistory;
+import business.question.QuestionResult;
+import business.typinggame.TypingGame;
+import business.typinggame.TypingGameDifficulty;
+import business.typinggame.TypingGameHistory;
+import ui.util.StandardInputReaderWrapper;
 
 import java.util.List;
 

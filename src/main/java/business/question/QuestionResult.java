@@ -1,4 +1,4 @@
-package business;
+package business.question;
 
 /**
  * 問題の結果を表現するクラス。

@@ -1,6 +1,11 @@
 package ui;
 
-import business.*;
+import business.typinggame.TypingGame;
+import business.typinggame.TypingGameDifficulty;
+import business.typinggame.factory.TypingGameFactory;
+import business.typinggame.mode.NextQuestionGeneratorMode;
+import business.typinggame.mode.TypingGameMode;
+import ui.util.StandardInputReaderWrapper;
 
 import java.util.Arrays;
 

@@ -1,4 +1,7 @@
-package business;
+package business.typinggame.listener;
+
+import business.question.Question;
+import business.typinggame.TypingGame;
 
 /**
  * タイピングゲームの各イベントで呼び出されるリスナーインターフェース。

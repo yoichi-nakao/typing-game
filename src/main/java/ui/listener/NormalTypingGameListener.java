@@ -1,8 +1,9 @@
-package ui;
+package ui.listener;
 
-import business.Question;
-import business.TypingGame;
-import business.TypingGameListener;
+import business.question.Question;
+import business.typinggame.TypingGame;
+import business.typinggame.listener.TypingGameListener;
+import ui.util.StandardInputReader;
 
 /**
  * 通常のタイピングゲームの入出力用のリスナークラス。

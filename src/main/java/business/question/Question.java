@@ -1,4 +1,6 @@
-package business;
+package business.question;
+
+import business.typinggame.TypingGameDifficulty;
 
 /**
  * 問題を表現するクラス。

@@ -1,8 +1,9 @@
-package ui;
+package ui.listener;
 
-import business.Question;
-import business.TypingGame;
-import business.TypingGameListener;
+import business.question.Question;
+import business.typinggame.TypingGame;
+import business.typinggame.listener.TypingGameListener;
+import ui.util.StandardInputReader;
 
 import java.util.List;
 

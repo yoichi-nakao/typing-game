@@ -1,4 +1,6 @@
-package business;
+package business.typinggame.generator;
+
+import business.question.Question;
 
 /**
  * 次の問題を生成するインターフェース。

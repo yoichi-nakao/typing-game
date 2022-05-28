@@ -1,4 +1,6 @@
-package business;
+package business.typinggame.generator;
+
+import business.question.Question;
 
 import java.util.List;
 

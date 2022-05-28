@@ -1,7 +1,17 @@
-package business;
+package business.typinggame.factory;
 
-import ui.HotTypingGameListener;
-import ui.NormalTypingGameListener;
+import business.question.Question;
+import business.question.factory.QuestionFactory;
+import business.typinggame.TypingGame;
+import business.typinggame.TypingGameDifficulty;
+import business.typinggame.generator.NextQuestionGenerator;
+import business.typinggame.generator.NotMatchPastNextQuestionGenerator;
+import business.typinggame.generator.NotMatchPreviousNextQuestionGenerator;
+import business.typinggame.listener.TypingGameListener;
+import business.typinggame.mode.NextQuestionGeneratorMode;
+import business.typinggame.mode.TypingGameMode;
+import ui.listener.HotTypingGameListener;
+import ui.listener.NormalTypingGameListener;
 
 import java.util.List;
 

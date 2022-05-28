@@ -1,4 +1,4 @@
-package business;
+package business.typinggame.mode;
 
 import java.util.Arrays;
 

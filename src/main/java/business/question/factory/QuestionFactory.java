@@ -1,4 +1,7 @@
-package business;
+package business.question.factory;
+
+import business.question.Question;
+import business.typinggame.TypingGameDifficulty;
 
 import java.util.List;
 import java.util.stream.Collectors;

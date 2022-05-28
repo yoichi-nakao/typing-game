@@ -1,4 +1,9 @@
-package business;
+package business.typinggame;
+
+import business.question.Question;
+import business.question.QuestionResult;
+import business.typinggame.generator.NextQuestionGenerator;
+import business.typinggame.listener.TypingGameListener;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
