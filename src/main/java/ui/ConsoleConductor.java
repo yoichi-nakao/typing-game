@@ -1,8 +1,10 @@
 package ui;
 
-import business.*;
+import business.QuestionResult;
+import business.TypingGame;
+import business.TypingGameDifficulty;
+import business.TypingGameHistory;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,13 +18,8 @@ public class ConsoleConductor {
     TypingGameHistory history = new TypingGameHistory();
 
     do {
-      TypingGameDifficulty difficulty = displayInputDifficulty();
-
-      TypingGameMode typingGameMode = displayInputMode();
-
-      NextQuestionGeneratorMode calculatorMode = displayInputGeneratorMode();
-
-      TypingGame typingGame = TypingGameFactory.generate(difficulty, typingGameMode, calculatorMode);
+      DisplayInputMode displayInputMode = new DisplayInputMode();
+      TypingGame typingGame = displayInputMode.getInput();
 
       displayCountDown();
 
@@ -32,63 +29,9 @@ public class ConsoleConductor {
 
       history.add(typingGame);
 
-      displayRanking(history, difficulty);
+      displayRanking(history, typingGame.getDifficulty());
 
     } while (displayInputRetry());
-  }
-
-  /**
-   * タイピングゲームの難易度入力を表示する。
-   *
-   * @return タイピングゲームの難易度
-   */
-  private TypingGameDifficulty displayInputDifficulty() {
-    int max = TypingGameDifficulty.values().length;
-    int defaultLevel = TypingGameDifficulty.getDefault().getLevel();
-
-    System.out.printf("難易度を選択してください(1-%d) [%d]：%n", max, defaultLevel);
-    Arrays.stream(TypingGameDifficulty.values())
-            .forEach(d -> System.out.printf(" %d:%s%n", d.getLevel(), d.getName()));
-
-    int inputDifficultyLevel = getInputInt(defaultLevel);
-
-    return TypingGameDifficulty.of(inputDifficultyLevel);
-  }
-
-  /**
-   * タイピングゲームのモード入力を表示する。
-   *
-   * @return タイピングゲームのモード
-   */
-  private TypingGameMode displayInputMode() {
-    int max = TypingGameMode.values().length;
-    int defaultMode = TypingGameMode.getDefault().getMode();
-
-    System.out.printf("ゲームモードを選択してください(1-%d) [%d]：%n", max, defaultMode);
-    Arrays.stream(TypingGameMode.values())
-            .forEach(d -> System.out.printf(" %d:%s%n", d.getMode(), d.getName()));
-
-    int inputDifficultyLevel = getInputInt(defaultMode);
-
-    return TypingGameMode.of(inputDifficultyLevel);
-  }
-
-  /**
-   * タイピングゲームの次の問題の生成モード入力を表示する。
-   *
-   * @return タイピングゲームの次の問題の生成モード
-   */
-  private NextQuestionGeneratorMode displayInputGeneratorMode() {
-    int max = NextQuestionGeneratorMode.values().length;
-    int defaultMode = NextQuestionGeneratorMode.getDefault().getMode();
-
-    System.out.printf("質問の出題方法を選択してください(1-%d) [%d]：%n", max, defaultMode);
-    Arrays.stream(NextQuestionGeneratorMode.values())
-            .forEach(d -> System.out.printf(" %d:%s%n", d.getMode(), d.getName()));
-
-    int inputDifficultyLevel = getInputInt(defaultMode);
-
-    return NextQuestionGeneratorMode.of(inputDifficultyLevel);
   }
 
   /**
@@ -152,24 +95,8 @@ public class ConsoleConductor {
 
     System.out.printf("リトライしますか？(1:する 2:しない) [%d]：%n", defaultValue);
 
-    int inputRetry = getInputInt(defaultValue);
+    int inputRetry = StandardInputReaderWrapper.getInputInt(defaultValue);
 
     return inputRetry == 1;
-  }
-
-  /**
-   * コンソールから入力を受け付け、数値に変換して返却する。
-   *
-   * @param defaultValue 数値以外が入力された場合のデフォルト値
-   * @return 数値に変換された入力値
-   */
-  private int getInputInt(int defaultValue) {
-    int input;
-    try {
-      input = StandardInputReader.getInputInt("> ");
-    } catch (NumberFormatException e) {
-      input = defaultValue;
-    }
-    return input;
   }
 }

@@ -84,6 +84,15 @@ public class TypingGame {
   }
 
   /**
+   * 難易度を返却する。
+   *
+   * @return 難易度
+   */
+  public TypingGameDifficulty getDifficulty() {
+    return difficulty;
+  }
+
+  /**
    * 出題した問題の履歴を返却する。
    *
    * @return 出題した問題の履歴
