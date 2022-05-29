@@ -1,3 +1,9 @@
+package ui;
+
+import business.Question;
+import business.TypingGame;
+import business.TypingGameListener;
+
 /**
  * 通常のタイピングゲームの入出力用のリスナークラス。
  *

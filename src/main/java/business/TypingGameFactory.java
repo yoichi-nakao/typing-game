@@ -1,3 +1,7 @@
+package business;
+
+import ui.NormalTypingGameListener;
+
 import java.util.List;
 
 /**

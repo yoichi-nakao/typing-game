@@ -1,3 +1,5 @@
+package business;
+
 /**
  * 問題を表現するクラス。
  */
