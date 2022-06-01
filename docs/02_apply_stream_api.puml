@@ -1,0 +1,87 @@
+@startuml 02_apply_stream_api
+
+note as note_main
+  背景がピンク：新規に作成したクラス
+  背景がオレンジ：修正したクラス
+end note
+
+class Main #orange {
+  + {static} main()
+  - {static} TypingGameDifficulty displayInputDifficulty()
+  - {static} void displayCountDown()
+  - {static} void displayRanking(TypingGameHistory typingGameHistory, TypingGameDifficulty difficulty)
+  - {static} boolean displayInputRetry()
+  - {static} static int getInputInt(int defaultValue)
+}
+
+class TypingGame #Orange {
+  - TypingGameDifficulty difficulty
+  - List<Question> questions
+  - long timeToCalculate
+  - Question prevQuestion
+  + TypingGame(TypingGameDifficulty difficulty, List<Question> questions)
+  + void execute()
+  + long getTimeToCalculate()
+  + boolean isSameDifficulty(TypingGameDifficulty difficulty)
+  + int getNumberOfQuestions()
+  - Question getNextQuestion()
+  - String toString()
+}
+
+enum TypingGameDifficulty #Orange {
+  + EASY
+  + NORMAL
+  + HARD
+  ..
+  - String name
+  - int level
+  - boolean defaultLevel
+  __
+  + TypingGameDifficulty(String name, int level, boolean defaultLevel)
+  + {static} TypingGameDifficulty of(int level)
+  + {static} TypingGameDifficulty getDefault()
+  + String getName()
+  + int getLevel()
+  + boolean lessThan(TypingGameDifficulty difficulty)
+}
+
+class TypingGameHistory #Orange {
+  - List<TypingGame> typingGames
+  + void add(TypingGame typingGame)
+  + List<TypingGame> sortedTypingGames(TypingGameDifficulty difficulty)
+  - List<TypingGame> getTypingGames(TypingGameDifficulty difficulty)
+}
+
+class TypingGameFactory #Orange {
+  + {static} TypingGame generate(TypingGameDifficulty difficulty)
+}
+
+class Question {
+  - String word
+  - TypingGameDifficulty difficulty
+  + Question(String word, TypingGameDifficulty difficulty)
+  + String getWord()
+}
+
+class QuestionFactory #Orange {
+  + static List<Question> generate(TypingGameDifficulty difficulty)
+  - static List<Question> generate()
+}
+
+class StandardInputReader {}
+
+Main -- TypingGameFactory : use >
+Main -- StandardInputReader : use >
+
+TypingGameFactory -- QuestionFactory : use >
+
+TypingGameFactory -- TypingGame : generate >
+
+QuestionFactory -- Question : generate >
+
+TypingGameHistory --> TypingGame
+TypingGame --> TypingGameDifficulty
+TypingGame --> Question
+TypingGame -- StandardInputReader : use >
+
+@enduml

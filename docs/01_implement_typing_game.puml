@@ -1,0 +1,129 @@
+@startuml 01_implement_typing_game
+
+note as note_main
+  背景がピンク：新規に作成したクラス
+  背景がオレンジ：修正したクラス
+end note
+
+note as note_comment
+  タイピングゲーム演習の仕様に沿って実装しています。
+  作り方としては、とりあえず、処理を実施するクラス（Main）と登場人物になるクラス
+  （TypingGame、Question、TypingGameDifficulty）を最初作っておいて、
+  Main に処理を書きながら、private メソッドに適宜分割して、
+  何か違和感があったら適切なクラスに移動させるという感じで実装しました。
+  必要なクラス（Main、TypingGame、Question、TypingGameDifficulty）が少ないので、いきなり実装から始めました。
+end note
+
+class Main #pink {
+  + {static} main()
+  - {static} TypingGameDifficulty displayInputDifficulty()
+  - {static} void displayCountDown()
+  - {static} void displayRanking(TypingGameHistory typingGameHistory, TypingGameDifficulty difficulty)
+  - {static} boolean displayInputRetry()
+  - {static} static int getInputInt(int defaultValue)
+}
+note left
+  他のクラスを使用して、タイピングゲームを実行するクラス。
+  ..
+  mainメソッドに、01_演習_タイピングゲーム.pdfのP.4実行イメージの順番で処理を実装しています。
+  また、読みやすいようにprivateメソッドで分割しています。
+end note
+
+class TypingGame #pink {
+  - TypingGameDifficulty difficulty
+  - Question[] questions
+  - long timeToCalculate
+  - Question prevQuestion
+  + TypingGame(TypingGameDifficulty difficulty, Question[] questions)
+  + void execute()
+  + long getTimeToCalculate()
+  + boolean isSameDifficulty(TypingGameDifficulty difficulty)
+  + int getNumberOfQuestions()
+  - Question getNextQuestion()
+  - String toString()
+}
+note right
+  一回のタイピングゲームを表現するクラス
+  ..
+  executeメソッドでタイプゲームの実行の処理を実装しています。
+end note
+
+enum TypingGameDifficulty #pink {
+  + EASY
+  + NORMAL
+  + HARD
+  ..
+  - String name
+  - int level
+  - boolean defaultLevel
+  __
+  + TypingGameDifficulty(String name, int level, boolean defaultLevel)
+  + {static} TypingGameDifficulty of(int level)
+  + {static} TypingGameDifficulty getDefault()
+  + String getName()
+  + int getLevel()
+  + boolean lessThan(TypingGameDifficulty difficulty)
+}
+note right
+  タイピングゲームの難易度
+end note
+
+class TypingGameHistory #pink {
+  - TypingGame[] typingGames
+  + void add(TypingGame typingGame)
+  + TypingGame[] sortedTypingGames(TypingGameDifficulty difficulty)
+  - TypingGame[] getTypingGames(TypingGameDifficulty difficulty)
+}
+note right
+  TypingGameの履歴。
+  1ゲーム終わるごとに保存。
+end note
+
+class TypingGameFactory #pink {
+  + {static} TypingGame generate(TypingGameDifficulty difficulty)
+}
+note left
+  タイピングゲームを生成するFactoryクラス。
+end note
+
+class Question #pink {
+  - String word
+  - TypingGameDifficulty difficulty
+  + Question(String word, TypingGameDifficulty difficulty)
+  + String getWord()
+}
+note left
+  問題を表現するクラス。
+  ..
+  1つの単語と対応する難易度を保持。
+end note
+
+class QuestionFactory #pink {
+  + static Question[] generate(TypingGameDifficulty difficulty)
+  - static Question[] generate()
+}
+note left
+  問題を生成するFactoryクラス。
+  ..
+  インスタンスの生成が複雑になるとき、
+  Factoryクラスにインスタンス生成処理を委譲します。
+  よく使われる手法です。
+end note
+
+class StandardInputReader #pink {}
+
+Main -- TypingGameFactory : use >
+Main -- StandardInputReader : use >
+
+TypingGameFactory -- QuestionFactory : use >
+
+TypingGameFactory -- TypingGame : generate >
+
+QuestionFactory -- Question : generate >
+
+TypingGameHistory --> TypingGame
+TypingGame --> TypingGameDifficulty
+TypingGame --> Question
+TypingGame -- StandardInputReader : use >
+
+@enduml

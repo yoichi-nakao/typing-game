@@ -1,0 +1,165 @@
+@startuml 08_externalization_question_generator
+
+note as note_main
+  背景がピンク：新規に作成したクラス
+  背景がオレンジ：修正したクラス
+end note
+
+class Main {
+  + {static} main()
+}
+
+package business {
+  class TypingGame #Orange {
+    - TypingGameDifficulty difficulty
+    - TypingGameListener listener
+    - NextQuestionGenerator generator
+    - List<QuestionResult> results
+    - ZonedDateTime startTime
+    - ZonedDateTime endTime
+    + TypingGame(TypingGameDifficulty difficulty, TypingGameListener listener, NextQuestionGenerator generator)
+    + void execute()
+    + List<QuestionResult> getResults()
+    + long getTimeToCalculate()
+    + boolean isSameDifficulty(TypingGameDifficulty difficulty)
+    + int getNumberOfQuestions()
+    - String toString()
+  }
+  note top
+    NextQuestionGeneratorを介して次の問題を生成することによって、
+    TypingGameから次の問題を生成する処理との依存関係を切り離すことが出来た。
+  end note
+
+  interface TypingGameListener {
+    void onGameStart(TypingGame typingGame)
+    void onGameEnd(TypingGame typingGame)
+    String receiveAnswer(Question question)
+    void onJudgeOK(TypingGame typingGame)
+    void onJudgeNG(TypingGame typingGame)
+  }
+
+  interface NextQuestionGenerator #Pink {
+    Question generate()
+  }
+
+  class NotMatchPreviousNextQuestionGenerator #Pink implements NextQuestionGenerator {
+    - List<Question> questions
+    - Question prevQuestion
+    + NotMatchPreviousNextQuestionGenerator(List<Question> questions)
+  }
+  note bottom of NotMatchPreviousNextQuestionGenerator
+    TypingGameから移した次の問題を生成する処理が入っている。
+  end note
+
+  enum TypingGameMode {
+    + NORMAL
+    + HOT
+    ..
+    - String name
+    - int mode
+    - boolean defaultMode
+    __
+    + TypingGameMode(String name, int mode, boolean defaultMode)
+    + {static} TypingGameMode of(int mode)
+    + {static} TypingGameMode getDefault()
+    + String getName()
+    + int getMode()
+  }
+
+  enum TypingGameDifficulty {
+    + EASY
+    + NORMAL
+    + HARD
+    ..
+    - String name
+    - int level
+    - boolean defaultLevel
+    __
+    + TypingGameDifficulty(String name, int level, boolean defaultLevel)
+    + {static} TypingGameDifficulty of(int level)
+    + {static} TypingGameDifficulty getDefault()
+    + String getName()
+    + int getLevel()
+    + boolean lessThan(TypingGameDifficulty difficulty)
+  }
+
+  class TypingGameHistory {
+    - List<TypingGame> typingGames
+    + void add(TypingGame typingGame)
+    + List<TypingGame> sortedTypingGames(TypingGameDifficulty difficulty)
+    - List<TypingGame> getTypingGames(TypingGameDifficulty difficulty)
+  }
+
+  class TypingGameFactory #Orange {
+    + {static} TypingGame generate(TypingGameDifficulty difficulty, TypingGameMode typingGameMode)
+  }
+  note top 
+    TypingGameFactoryでNextQuestionGeneratorの
+    実装クラスを設定するように修正。
+  end note
+
+  class Question {
+    - String word
+    - TypingGameDifficulty difficulty
+    + Question(String word, TypingGameDifficulty difficulty)
+    + String getWord()
+  }
+
+  class QuestionResult {
+    - Question question
+    - String answer
+    - boolean judge
+    + QuestionResult(Question question, String answer, boolean judge)
+    + Question getQuestion()
+    + String getAnswer()
+    + boolean isJudge()
+  }
+
+  class QuestionFactory {
+    + static List<Question> generate(TypingGameDifficulty difficulty)
+    - static List<Question> generate()
+  }
+}
+
+package ui {
+  class ConsoleConductor {
+    + execute()
+    - TypingGameDifficulty displayInputDifficulty()
+    - TypingGameMode displayInputMode()
+    - void displayCountDown()
+    - void displayResult(TypingGame typingGame)
+    - void displayRanking(TypingGameHistory typingGameHistory, TypingGameDifficulty difficulty)
+    - boolean displayInputRetry()
+    - static int getInputInt(int defaultValue)
+  }
+
+  class NormalTypingGameListener implements TypingGameListener
+
+  class HotTypingGameListener implements TypingGameListener
+
+  class StandardInputReader {}
+}
+
+Main -l- ConsoleConductor : use >
+
+ConsoleConductor -- TypingGameFactory : use >
+ConsoleConductor -- StandardInputReader : use >
+
+TypingGameFactory -- QuestionFactory : use >
+TypingGameFactory -- TypingGameMode : use >
+
+TypingGameFactory -- TypingGame : generate >
+
+QuestionFactory -- Question : generate >
+
+TypingGameHistory --> TypingGame
+TypingGame --> TypingGameDifficulty
+TypingGame --> Question
+TypingGame --> QuestionResult
+TypingGame --> TypingGameListener
+TypingGame --> NextQuestionGenerator
+
+NormalTypingGameListener -- StandardInputReader : use >
+HotTypingGameListener -- StandardInputReader : use >
+
+@enduml

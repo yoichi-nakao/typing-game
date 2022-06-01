@@ -1,0 +1,206 @@
+@startuml typing_game
+
+class Main {
+  + {static} main()
+}
+
+package business {
+  package typinggame {
+    class TypingGame {
+      - TypingGameDifficulty difficulty
+      - TypingGameListener listener
+      - NextQuestionGenerator generator
+      - List<QuestionResult> results
+      - ZonedDateTime startTime
+      - ZonedDateTime endTime
+      + TypingGame(TypingGameDifficulty difficulty, TypingGameListener listener, NextQuestionGenerator generator)
+      + void execute()
+      + TypingGameDifficulty getDifficulty()
+      + List<QuestionResult> getResults()
+      + long getTimeToCalculate()
+      + boolean isSameDifficulty(TypingGameDifficulty difficulty)
+      + int getNumberOfQuestions()
+      - String toString()
+    }
+
+    enum TypingGameDifficulty {
+      + EASY
+      + NORMAL
+      + HARD
+      ..
+      - String name
+      - int level
+      - boolean defaultLevel
+      __
+      + TypingGameDifficulty(String name, int level, boolean defaultLevel)
+      + {static} TypingGameDifficulty of(int level)
+      + {static} TypingGameDifficulty getDefault()
+      + String getName()
+      + int getLevel()
+      + boolean lessThan(TypingGameDifficulty difficulty)
+    }
+
+    class TypingGameHistory {
+      - List<TypingGame> typingGames
+      + void add(TypingGame typingGame)
+      + List<TypingGame> sortedTypingGames(TypingGameDifficulty difficulty)
+      - List<TypingGame> getTypingGames(TypingGameDifficulty difficulty)
+    }
+
+    package typinggame.factory {
+      class TypingGameFactory {
+        + {static} TypingGame generate(TypingGameDifficulty difficulty, TypingGameMode typingGameMode)
+      }
+    }
+    
+    package generator {
+      interface NextQuestionGenerator {
+        Question generate()
+      }
+
+      abstract class AbstractNextQuestionGenerator implements NextQuestionGenerator {
+        - List<Question> questions
+        + AbstractNextQuestionGenerator(List<Question> questions)  
+      }
+
+      class NotMatchPreviousNextQuestionGenerator extends AbstractNextQuestionGenerator {
+        - Question prevQuestion
+        + NotMatchPreviousNextQuestionGenerator(List<Question> questions)
+      }
+
+      class NotMatchPastNextQuestionGenerator extends AbstractNextQuestionGenerator {
+        - Set<Question> askedQuestions
+        + NotMatchPastNextQuestionGenerator(List<Question> questions)
+      }
+    }
+
+    package listener {
+      interface TypingGameListener {
+        void onGameStart(TypingGame typingGame)
+        void onGameEnd(TypingGame typingGame)
+        String receiveAnswer(Question question)
+        void onJudgeOK(TypingGame typingGame)
+        void onJudgeNG(TypingGame typingGame)
+      }
+    }
+    
+    package mode {
+      enum TypingGameMode {
+        + NORMAL
+        + HOT
+        ..
+        - String name
+        - int mode
+        - boolean defaultMode
+        __
+        + TypingGameMode(String name, int mode, boolean defaultMode)
+        + {static} TypingGameMode of(int mode)
+        + {static} TypingGameMode getDefault()
+        + String getName()
+        + int getMode()
+      }
+
+      enum NextQuestionGeneratorMode {
+        + NOT_MATCH_PREVIOUS
+        + NOT_MATCH_PAST
+        ..
+        - String name
+        - int mode
+        - boolean defaultLevel
+        __
+        + NextQuestionGeneratorMode(String name, int mode, boolean defaultMode)
+        + {static} NextQuestionGeneratorMode of(int mode)
+        + {static} NextQuestionGeneratorMode getDefault()
+        + String getName()
+        + int getMode()
+      }
+    }
+  }
+
+  package question {
+    class Question {
+      - String word
+      - TypingGameDifficulty difficulty
+      + Question(String word, TypingGameDifficulty difficulty)
+      + String getWord()
+    }
+
+    class QuestionResult {
+      - Question question
+      - String answer
+      - boolean judge
+      + QuestionResult(Question question, String answer, boolean judge)
+      + Question getQuestion()
+      + String getAnswer()
+      + boolean isJudge()
+    }
+
+    package factory {
+      class QuestionFactory {
+        + static List<Question> generate(TypingGameDifficulty difficulty)
+        - static List<Question> generate()
+      }
+    }
+  }
+}
+
+package ui {
+  class ConsoleConductor {
+    + execute()
+    - void displayCountDown()
+    - void displayResult(TypingGame typingGame)
+    - void displayRanking(TypingGameHistory typingGameHistory, TypingGameDifficulty difficulty)
+    - boolean displayInputRetry()
+  }
+
+  class DisplayInputMode {
+    + TypingGame getInput()
+    - {static} TypingGameDifficulty displayInputDifficulty()
+    - {static} TypingGameMode displayInputMode()
+    - {static} NextQuestionGeneratorMode displayInputCalculatorMode()
+  }
+
+  package ui.listener {
+    class NormalTypingGameListener implements TypingGameListener
+
+    class HotTypingGameListener implements TypingGameListener
+  }
+
+  package util {
+    class StandardInputReaderWrapper {
+      + {static} int getInputInt(int defaultValue)
+    }
+
+    class StandardInputReader {}
+  }
+}
+
+Main -d- ConsoleConductor : use >
+
+ConsoleConductor -- DisplayInputMode : use >
+ConsoleConductor -- StandardInputReaderWrapper : use >
+
+DisplayInputMode -- TypingGameFactory : use >
+DisplayInputMode -- StandardInputReaderWrapper : use >
+
+TypingGameFactory -- QuestionFactory : use >
+TypingGameFactory -- TypingGameMode : use >
+TypingGameFactory -- NextQuestionGeneratorMode : use >
+
+TypingGameFactory -- TypingGame : generate >
+
+QuestionFactory -- Question : generate >
+
+TypingGameHistory --> TypingGame
+TypingGame --> TypingGameDifficulty
+TypingGame --> Question
+TypingGame --> QuestionResult
+TypingGame --> TypingGameListener
+TypingGame --> NextQuestionGenerator
+
+NormalTypingGameListener -- StandardInputReader : use >
+HotTypingGameListener -- StandardInputReader : use >
+
+StandardInputReaderWrapper -- StandardInputReader : use >
+
+@enduml

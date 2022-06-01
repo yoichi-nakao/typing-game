@@ -1,0 +1,130 @@
+@startuml 06_configure_package
+
+note as note_main
+  背景がピンク：新規に作成したクラス
+  背景がオレンジ：修正したクラス
+end note
+
+class Main #Orange {
+  + {static} main()
+}
+
+package business {
+  class TypingGame {
+    - TypingGameDifficulty difficulty
+    - List<Question> questions
+    - TypingGameListener listener
+    - List<QuestionResult> results
+    - ZonedDateTime startTime
+    - ZonedDateTime endTime
+    - Question prevQuestion
+    + TypingGame(TypingGameDifficulty difficulty, List<Question> questions, TypingGameListener listener)
+    + void execute()
+    + List<QuestionResult> getResults()
+    + long getTimeToCalculate()
+    + boolean isSameDifficulty(TypingGameDifficulty difficulty)
+    + int getNumberOfQuestions()
+    - Question getNextQuestion()
+    - String toString()
+  }
+
+  interface TypingGameListener {
+    void onGameStart(TypingGame typingGame)
+    void onGameEnd(TypingGame typingGame)
+    String receiveAnswer(Question question)
+    void onJudgeOK(TypingGame typingGame)
+    void onJudgeNG(TypingGame typingGame)
+  }
+
+  enum TypingGameDifficulty {
+    + EASY
+    + NORMAL
+    + HARD
+    ..
+    - String name
+    - int level
+    - boolean defaultLevel
+    __
+    + TypingGameDifficulty(String name, int level, boolean defaultLevel)
+    + {static} TypingGameDifficulty of(int level)
+    + {static} TypingGameDifficulty getDefault()
+    + String getName()
+    + int getLevel()
+    + boolean lessThan(TypingGameDifficulty difficulty)
+  }
+
+  class TypingGameHistory {
+    - List<TypingGame> typingGames
+    + void add(TypingGame typingGame)
+    + List<TypingGame> sortedTypingGames(TypingGameDifficulty difficulty)
+    - List<TypingGame> getTypingGames(TypingGameDifficulty difficulty)
+  }
+
+  class TypingGameFactory {
+    + {static} TypingGame generate(TypingGameDifficulty difficulty)
+  }
+
+  class Question {
+    - String word
+    - TypingGameDifficulty difficulty
+    + Question(String word, TypingGameDifficulty difficulty)
+    + String getWord()
+  }
+
+  class QuestionResult {
+    - Question question
+    - String answer
+    - boolean judge
+    + QuestionResult(Question question, String answer, boolean judge)
+    + Question getQuestion()
+    + String getAnswer()
+    + boolean isJudge()
+  }
+
+  class QuestionFactory {
+    + static List<Question> generate(TypingGameDifficulty difficulty)
+    - static List<Question> generate()
+  }
+}
+
+package ui {
+  class ConsoleConductor #Pink {
+    + execute()
+    - TypingGameDifficulty displayInputDifficulty()
+    - void displayCountDown()
+    - void displayResult(TypingGame typingGame)
+    - void displayRanking(TypingGameHistory typingGameHistory, TypingGameDifficulty difficulty)
+    - boolean displayInputRetry()
+    - static int getInputInt(int defaultValue)
+  }
+  note bottom
+    Mainクラスがuiパッケージの中に入ると、
+    mainメソッドがどこにあるかわかりにくくなるので、
+    中身は全てConsoleConductorに移した。
+  end note
+
+  class NormalTypingGameListener implements TypingGameListener
+
+  class StandardInputReader {}
+}
+
+Main -l- ConsoleConductor : use >
+
+ConsoleConductor -- TypingGameFactory : use >
+ConsoleConductor -- StandardInputReader : use >
+
+TypingGameFactory -- QuestionFactory : use >
+
+TypingGameFactory -- TypingGame : generate >
+
+QuestionFactory -- Question : generate >
+
+TypingGameHistory --> TypingGame
+TypingGame --> TypingGameDifficulty
+TypingGame --> Question
+TypingGame --> QuestionResult
+TypingGame --> TypingGameListener
+
+NormalTypingGameListener -- StandardInputReader : use >
+
+@enduml
